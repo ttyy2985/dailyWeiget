@@ -11,48 +11,6 @@ $theme-colors: (
   "fail": #ff6440,
 );
 
-@mixin toast-position-animation {
-  @each $position in $positions {
-    $section: nth($position, 1);
-    $row: nth($position, 2);
-    @each $x in $row {
-      &.#{$x}-#{$section} {
-        #{$section}: $yPadding;
-        @if $x == "center" {
-          right: 50%;
-          transform: translateX(50%);
-        } @else {
-          #{$x}: $xPadding;
-        }
-      }
-      &.show.#{$x}-#{$section} {
-        visibility: visible; /* Show the snackbar */
-        animation: fadein-#{$section} 0.5s, fadeout-#{$section} 0.5s 2.5s;
-      }
-    }
-    @keyframes fadein-#{$section} {
-      from {
-        #{$section}: 0;
-        opacity: 0;
-      }
-      to {
-        #{$section}: 30px;
-        opacity: 1;
-      }
-    }
-    @keyframes fadeout-#{$section} {
-      from {
-        #{$section}: 30px;
-        opacity: 1;
-      }
-      to {
-        #{$section}: 0;
-        opacity: 0;
-      }
-    }
-  }
-}
-
 @mixin toast-color {
   @each $name, $color in $theme-colors {
     &.toast-#{$name} {
@@ -71,20 +29,62 @@ $theme-colors: (
   }
 }
 
-.toast {
-  visibility: hidden; /* Hidden by default. Visible on click */
-  min-width: 250px; /* Set a default minimum width */
-  text-align: left; /* Centered text */
-  border-radius: 2px; /* Rounded borders */
-  padding: 16px; /* Padding */
+@mixin toast-container-position {
+  @each $position in $positions {
+    $section: nth($position, 1);
+    $row: nth($position, 2);
+    @each $x in $row {
+      &.#{$x}-#{$section} {
+        #{$section}: $yPadding;
+        @if $x == "center" {
+          right: 50%;
+          transform: translateX(50%);
+        } @else {
+          #{$x}: $xPadding;
+        }
+      }
+    }
+  }
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeout {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.toast-container {
   position: fixed; /* Sit on top of the screen */
-  z-index: 1; /* Add a z-index if needed */
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  background-color: lighten(rgb(138, 131, 131), 50%);
-  color: darken(rgb(138, 131, 131), 20%);
-  border: 2px solid lighten(rgb(138, 131, 131), 20%);
-  @include toast-position-animation;
-  @include toast-color;
+  z-index: 999999;
+  @include toast-container-position;
+  .toast {
+    visibility: hidden; /* Hidden by default. Visible on click */
+    min-width: 250px; /* Set a default minimum width */
+    text-align: left; /* Centered text */
+    border-radius: 2px; /* Rounded borders */
+    padding: 16px; /* Padding */
+    border-radius: 5px;
+    display: flex;
+    margin-top: 10px;
+    align-items: center;
+    background-color: lighten(rgb(138, 131, 131), 50%);
+    color: darken(rgb(138, 131, 131), 20%);
+    border: 2px solid lighten(rgb(138, 131, 131), 20%);
+    &.show {
+      visibility: visible; /* Show the snackbar */
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+    @include toast-color;
+  }
 }
