@@ -4,9 +4,15 @@ $yPadding: 30px;
 $x: left, right, center;
 $y: top, bottom;
 $positions: (top ($x), bottom ($x));
+$theme-colors: (
+  "success": #28a745,
+  "info": #17a2b8,
+  "warning": #ffc107,
+  "fail": #ff6440,
+);
 
-@mixin  toast-position-animation {
-    @each $position in $positions {
+@mixin toast-position-animation {
+  @each $position in $positions {
     $section: nth($position, 1);
     $row: nth($position, 2);
     @each $x in $row {
@@ -34,18 +40,51 @@ $positions: (top ($x), bottom ($x));
         opacity: 1;
       }
     }
+    @keyframes fadeout-#{$section} {
+      from {
+        #{$section}: 30px;
+        opacity: 1;
+      }
+      to {
+        #{$section}: 0;
+        opacity: 0;
+      }
+    }
+  }
+}
+
+@mixin toast-color {
+  @each $name, $color in $theme-colors {
+    &.toast-#{$name} {
+      background-color: lighten($color, 50%);
+      color: darken($color, 20%);
+      border: 2px solid lighten($color, 20%);
+      &:before {
+        content: url("image/#{$name}.svg");
+        position: absolute;
+        overflow: hidden;
+      }
+      & span {
+        margin-left: 28px;
+      }
+    }
   }
 }
 
 .toast {
   visibility: hidden; /* Hidden by default. Visible on click */
   min-width: 250px; /* Set a default minimum width */
-  background-color: #333; /* Black background color */
-  color: #fff; /* White text color */
-  text-align: center; /* Centered text */
+  text-align: left; /* Centered text */
   border-radius: 2px; /* Rounded borders */
   padding: 16px; /* Padding */
   position: fixed; /* Sit on top of the screen */
   z-index: 1; /* Add a z-index if needed */
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  background-color: lighten(rgb(138, 131, 131), 50%);
+  color: darken(rgb(138, 131, 131), 20%);
+  border: 2px solid lighten(rgb(138, 131, 131), 20%);
   @include toast-position-animation;
+  @include toast-color;
 }
